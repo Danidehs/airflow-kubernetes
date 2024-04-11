@@ -68,7 +68,7 @@ airflowHome: /opt/airflow
 defaultAirflowRepository: airflow-custom
 
 # Default airflow tag to deploy
-defaultAirflowTag: '1.0.0'
+defaultAirflowTag: '1.0.1'
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
@@ -261,7 +261,7 @@ rbac:
 
 # Airflow executor
 # One of: LocalExecutor, LocalKubernetesExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: 'CeleryExecutor'
+executor: 'KubernetesExecutor'
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -367,7 +367,9 @@ extraEnv: ~
 
 # Extra envFrom 'items' that will be added to the definition of airflow containers
 # A string is expected (can be templated).
-extraEnvFrom: ~
+extraEnvFrom: |
+  - configMapRef:
+      name: 'airflow-variables'
 # eg:
 # extraEnvFrom: |
 #   - secretRef:
@@ -2559,19 +2561,14 @@ dags:
     #   memory: 128Mi
 
 logs:
-  # Configuration for empty dir volume (if logs.persistence.enabled == false)
-  # emptyDirConfig:
-  #   sizeLimit: 1Gi
-  #   medium: Memory
-
   persistence:
     # Enable persistent volume for storing logs
-    enabled: false
+    enabled: true
     # Volume size for logs
-    size: 100Gi
+    size: 10Gi
     # Annotations for the logs PVC
     annotations: {}
     # If using a custom storageClass, pass name here
     storageClassName:
     ## the name of an existing PVC to use
-    existingClaim:
+    existingClaim: airflow-log
