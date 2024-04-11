@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: airflow-logs
+  name: airflow-log
   labels:
-    app: airflow-logs
+    app: airflow-log
 spec:
   storageClassName: manual
 
@@ -14,7 +14,7 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: airflow-logs
+    name: airflow-log
     namespace: airflow
   hostPath:
     path: /tmp/data/
