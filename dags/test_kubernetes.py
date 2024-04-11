@@ -4,7 +4,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 from kubernetes.client.models import V1EnvVar
 
