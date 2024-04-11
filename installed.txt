@@ -1,0 +1,6 @@
+WSL - Ubuntu
+Chocolatey
+docker-desktop (con KinD)
+KinD
+Kubectl
+Helm
