@@ -30,11 +30,11 @@ with DAG(
 ) as dag:
     KubernetesPodOperator(
         namespace="airflow",
+        in_cluster=True,
         image="hello-world",
-        labels={"<pod-label>": "<label-name>"},
         name="airflow-test-pod",
         task_id="task-one",
-        in_cluster=in_cluster,  # if set to true, will look in the cluster, if false, looks for file
+        #in_cluster=in_cluster,  # if set to true, will look in the cluster, if false, looks for file
         cluster_context="docker-desktop",  # is ignored when in_cluster is set to True
         config_file=config_file,
         is_delete_operator_pod=True,
