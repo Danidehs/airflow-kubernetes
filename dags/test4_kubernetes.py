@@ -10,16 +10,16 @@ dag = DAG(
 )
 
 k = KubernetesPodOperator(
-    name="dry_run_test_k8s",
+    name="test4",
     image="debian",
     cmds=["bash", "-cx"],
     arguments=["echo 10"],
     labels={"foo": "bar"},
-    task_id="dry_run_demo",
+    task_id="test4",
     do_xcom_push=True,
     in_cluster=True
 
 )
 
 
-k.dry_run()
+# k.dry_run()
