@@ -24,4 +24,5 @@ with DAG('test_kubernetes',
         task_id="task",
         get_logs=True,
         in_cluster=True
+        
     )

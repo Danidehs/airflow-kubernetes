@@ -29,7 +29,7 @@ with DAG(
     dag_id="example_kubernetes_pod", schedule="@once", default_args=default_args
 ) as dag:
     KubernetesPodOperator(
-        namespace=namespace,
+        namespace="airflow",
         image="hello-world",
         labels={"<pod-label>": "<label-name>"},
         name="airflow-test-pod",
