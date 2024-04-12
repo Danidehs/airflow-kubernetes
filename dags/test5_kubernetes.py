@@ -2,6 +2,7 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow import DAG
 from airflow.configuration import conf
 from airflow.operators.bash_operator import BashOperator
+from airflow import DAG
 
 namespace = conf.get("kubernetes", "NAMESPACE")
 if namespace == "default":
@@ -10,6 +11,13 @@ if namespace == "default":
 else:
     in_cluster = True
     config_file = None
+
+dag = DAG(
+    'test5',
+    default_args={'start_date': days_ago(1)},
+    schedule_interval='@once',
+    catchup=False
+)
 
 write_xcom = KubernetesPodOperator(
     namespace="default",

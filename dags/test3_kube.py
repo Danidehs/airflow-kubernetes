@@ -37,6 +37,12 @@ class MyCallback(KubernetesPodOperatorCallback):
             ),
         )
 
+dag = DAG(
+    'test5',
+    default_args={'start_date': days_ago(1)},
+    schedule_interval='@once',
+    catchup=False
+)
 
 k = KubernetesPodOperator(
     task_id="test3_kube",

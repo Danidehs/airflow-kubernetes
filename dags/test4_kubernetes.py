@@ -1,4 +1,13 @@
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow import DAG
+
+
+dag = DAG(
+    'test4',
+    default_args={'start_date': days_ago(1)},
+    schedule_interval='@once',
+    catchup=False
+)
 
 k = KubernetesPodOperator(
     name="dry_run_test_k8s",
