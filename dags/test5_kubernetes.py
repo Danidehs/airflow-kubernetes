@@ -3,6 +3,7 @@ from airflow import DAG
 from airflow.configuration import conf
 from airflow.operators.bash_operator import BashOperator
 from airflow import DAG
+from datetime import datetime
 
 namespace = conf.get("kubernetes", "NAMESPACE")
 if namespace == "default":
@@ -14,7 +15,7 @@ else:
 
 dag = DAG(
     'test5',
-    default_args={'start_date': days_ago(1)},
+    default_args={'start_date': datetime(2022, 1, 1)},
     schedule_interval='@once',
     catchup=False
 )

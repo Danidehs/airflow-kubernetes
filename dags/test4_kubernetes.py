@@ -1,10 +1,10 @@
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow import DAG
-
+from datetime import datetime
 
 dag = DAG(
     'test4',
-    default_args={'start_date': days_ago(1)},
+    default_args={'start_date': datetime(2022, 1, 1)},
     schedule_interval='@once',
     catchup=False
 )
