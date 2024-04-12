@@ -1,6 +1,7 @@
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow import DAG
 from airflow.configuration import conf
+from airflow.operators.bash_operator import BashOperator
 
 namespace = conf.get("kubernetes", "NAMESPACE")
 if namespace == "default":
