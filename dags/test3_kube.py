@@ -1,5 +1,4 @@
 import kubernetes.client as k8s
-import kubernetes_asyncio.client as async_k8s
 
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
