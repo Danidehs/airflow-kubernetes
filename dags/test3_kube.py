@@ -1,8 +1,8 @@
 import kubernetes.client as k8s
-
+from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
-
+from datetime import datetime
 
 class MyCallback(KubernetesPodOperatorCallback):
     @staticmethod
@@ -39,7 +39,7 @@ class MyCallback(KubernetesPodOperatorCallback):
 
 dag = DAG(
     'test5',
-    default_args={'start_date': days_ago(1)},
+    default_args={'start_date': datetime(2022, 1, 1)},
     schedule_interval='@once',
     catchup=False
 )
