@@ -16,6 +16,7 @@ with DAG('test_kubernetes',
 
     task = KubernetesPodOperator(
         namespace='test-pod',
+        config_file="/home/airflow/composer_kube_config",
         image='python:3.11',
         cmds=["python", "-c"],
         arguments=["print('Hello from the Kubernetes Pod!')"],
@@ -24,5 +25,5 @@ with DAG('test_kubernetes',
         task_id="task",
         get_logs=True,
         in_cluster=True
-        
+
     )
