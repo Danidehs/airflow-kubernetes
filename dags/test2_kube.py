@@ -8,7 +8,7 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": datetime(2022, 1, 1),
+    "start_date": datetime(2024, 1, 1),
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 1,
@@ -31,11 +31,11 @@ with DAG(
     KubernetesPodOperator(
         # config_file="/home/airflow/composer_kube_config",
         namespace="airflow",
-        in_cluster=True,
+        # in_cluster=True,
         image="hello-world",
         name="airflow-test-pod",
         task_id="task-one",
-        #in_cluster=in_cluster,  # if set to true, will look in the cluster, if false, looks for file
+        in_cluster=in_cluster,  # if set to true, will look in the cluster, if false, looks for file
         cluster_context="docker-desktop",  # is ignored when in_cluster is set to True
         config_file=config_file,
         is_delete_operator_pod=True,
