@@ -367,7 +367,9 @@ extraEnv: ~
 
 # Extra envFrom 'items' that will be added to the definition of airflow containers
 # A string is expected (can be templated).
-extraEnvFrom: ~
+extraEnvFrom: |
+  - configMapRef:
+      name: 'airflow-variables'
 # eg:
 # extraEnvFrom: |
 #   - secretRef:

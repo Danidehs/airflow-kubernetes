@@ -29,7 +29,7 @@ with DAG(
     dag_id="example_kubernetes_pod", schedule="@once", default_args=default_args
 ) as dag:
     KubernetesPodOperator(
-        config_file="/home/airflow/composer_kube_config",
+        # config_file="/home/airflow/composer_kube_config",
         namespace="airflow",
         in_cluster=True,
         image="hello-world",

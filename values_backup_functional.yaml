@@ -261,7 +261,7 @@ rbac:
 
 # Airflow executor
 # One of: LocalExecutor, LocalKubernetesExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: 'KubernetesExecutor'
+executor: 'CeleryExecutor'
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -1366,9 +1366,9 @@ webserver:
 
 # Airflow Triggerer Config
 triggerer:
-  enabled: false
+  enabled: true
   # Number of airflow triggerers in the deployment
-  replicas: 0
+  replicas: 1
   # Max number of old replicasets to retain
   revisionHistoryLimit: ~
 
@@ -2455,23 +2455,6 @@ dags:
     existingClaim:
     ## optional subpath for dag volume mount
     subPath: ~
-  # gitSync:
-  #   enabled: true
-
-  #   # git repo clone url
-  #   # ssh example: git@github.com:apache/airflow.git
-  #   # https example: https://github.com/apache/airflow.git
-  #   repo: https://github.com/apache/airflow.git
-  #   branch: v2-2-stable
-  #   rev: HEAD
-  #   # The git revision (branch, tag, or hash) to check out, v4 only
-  #   ref: v2-2-stable
-  #   depth: 1
-  #   # the number of consecutive failures allowed before aborting
-  #   maxFailures: 0
-  #   # subpath within the repo where dags are located
-  #   # should be "" if dags are at repo root
-  #   subPath: 'kubernetes_tests'
   gitSync:
     enabled: true
 
@@ -2508,6 +2491,59 @@ dags:
     #
     # credentialsSecret: git-credentials
     #
+        apiVersion: v1
+          kind: Namespace
+          metadata:
+              name: nfv
+              labels:
+                  name: nfv
+          ---
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+              name: nfv-svc
+              namespace: nfv
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+              name: nfv-role
+              namespace: nfv
+          rules:
+              - apiGroups:
+                  - ''
+                resources:
+                  - 'pods'
+                verbs:
+                  - 'create'
+                  - 'delete'
+                  - 'get'
+                  - 'list'
+                  - 'patch'
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+              name: nfv-rolebind
+          subjects:
+              - kind: ServiceAccount
+                name: nfv-svc
+                namespace: nfv
+          roleRef:
+              kind: Role
+              name: nfv-role
+              apiGroup: rbac.authorization.k8s.io
+          ---
+          apiVersion: v1
+          kind: Pod
+          metadata:
+              name: sdn-test
+              namespace: nfv
+          spec:
+              serviceAccountName: nfv-svc
+              containers:
+                  - image: alpine:3.9
+                    name: sdn-test-
     #
     # If you are using an ssh clone url, you can load
     # the ssh private key to a k8s secret like the one below
@@ -2583,12 +2619,12 @@ logs:
 
   persistence:
     # Enable persistent volume for storing logs
-    enabled: true
+    enabled: false
     # Volume size for logs
-    size: 10Gi
+    size: 100Gi
     # Annotations for the logs PVC
     annotations: {}
     # If using a custom storageClass, pass name here
     storageClassName:
     ## the name of an existing PVC to use
-    existingClaim: airflow-log
+    existingClaim:
