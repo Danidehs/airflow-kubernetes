@@ -15,7 +15,7 @@ with DAG('test_kubernetes',
 
 
     task = KubernetesPodOperator(
-        namespace='nfv',
+        namespace='airflow',
         # config_file="/home/airflow/composer_kube_config",
         image='python:3.11',
         cmds=["python", "-c"],
