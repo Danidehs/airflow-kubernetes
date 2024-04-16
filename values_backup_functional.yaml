@@ -256,6 +256,7 @@ airflowLocalSettings: |-
 # Enable RBAC (default on most clusters these days)
 rbac:
   # Specifies whether RBAC resources should be created
+  enabled: false
   create: true
   createSCCRoleBinding: false
 
@@ -367,7 +368,9 @@ extraEnv: ~
 
 # Extra envFrom 'items' that will be added to the definition of airflow containers
 # A string is expected (can be templated).
-extraEnvFrom: ~
+extraEnvFrom: |
+  - configMapRef:
+      name: 'airflow-variables'
 # eg:
 # extraEnvFrom: |
 #   - secretRef:
@@ -2339,76 +2342,13 @@ postgresql:
 # yamllint disable rule:line-length
 config:
   core:
-    dags_folder: '{{ include "airflow_dags" . }}'
-    # This is ignored when used with the official Docker image
-    load_examples: 'False'
-    executor: '{{ .Values.executor }}'
-    # For Airflow 1.10, backward compatibility; moved to [logging] in 2.0
-    colored_console_log: 'False'
-    remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
-  logging:
-    remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
-    colored_console_log: 'False'
-  metrics:
-    statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
-    statsd_port: 9125
-    statsd_prefix: airflow
-    statsd_host: '{{ printf "%s-statsd" (include "airflow.fullname" .) }}'
-  webserver:
-    enable_proxy_fix: 'True'
-    # For Airflow 1.10
-    rbac: 'True'
-  celery:
-    flower_url_prefix: '{{ ternary "" .Values.ingress.flower.path (eq .Values.ingress.flower.path "/") }}'
-    worker_concurrency: 16
-  scheduler:
-    standalone_dag_processor: '{{ ternary "True" "False" .Values.dagProcessor.enabled }}'
-    # statsd params included for Airflow 1.10 backward compatibility; moved to [metrics] in 2.0
-    statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
-    statsd_port: 9125
-    statsd_prefix: airflow
-    statsd_host: '{{ printf "%s-statsd" (include "airflow.fullname" .) }}'
-    # `run_duration` included for Airflow 1.10 backward compatibility; removed in 2.0.
-    run_duration: 41460
-  elasticsearch:
-    json_format: 'True'
-    log_id_template: '{dag_id}_{task_id}_{execution_date}_{try_number}'
-  elasticsearch_configs:
-    max_retries: 3
-    timeout: 30
-    retry_timeout: 'True'
-  kerberos:
-    keytab: '{{ .Values.kerberos.keytabPath }}'
-    reinit_frequency: '{{ .Values.kerberos.reinitFrequency }}'
-    principal: '{{ .Values.kerberos.principal }}'
-    ccache: '{{ .Values.kerberos.ccacheMountPath }}/{{ .Values.kerberos.ccacheFileName }}'
-  celery_kubernetes_executor:
-    kubernetes_queue: 'kubernetes'
-  # The `kubernetes` section is deprecated in Airflow >= 2.5.0 due to an airflow.cfg schema change.
-  # The `kubernetes` section can be removed once the helm chart no longer supports Airflow < 2.5.0.
-  kubernetes:
-    namespace: '{{ .Release.Namespace }}'
-    # The following `airflow_` entries are for Airflow 1, and can be removed when it is no longer supported.
-    airflow_configmap: '{{ include "airflow_config" . }}'
-    airflow_local_settings_configmap: '{{ include "airflow_config" . }}'
-    pod_template_file: '{{ include "airflow_pod_template_file" . }}/pod_template_file.yaml'
-    worker_container_repository: '{{ .Values.images.airflow.repository | default .Values.defaultAirflowRepository }}'
-    worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
-    multi_namespace_mode: '{{ ternary "True" "False" .Values.multiNamespaceMode }}'
-  # The `kubernetes_executor` section duplicates the `kubernetes` section in Airflow >= 2.5.0 due to an airflow.cfg schema change.
-  kubernetes_executor:
-    namespace: '{{ .Release.Namespace }}'
-    pod_template_file: '{{ include "airflow_pod_template_file" . }}/pod_template_file.yaml'
-    worker_container_repository: '{{ .Values.images.airflow.repository | default .Values.defaultAirflowRepository }}'
-    worker_container_tag: '{{ .Values.images.airflow.tag | default .Values.defaultAirflowTag }}'
-    multi_namespace_mode: '{{ ternary "True" "False" .Values.multiNamespaceMode }}'
-  triggerer:
-    default_capacity: 1000
+    test_connection: 'Enabled'
+
 # yamllint enable rule:line-length
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
 # If true, it creates ClusterRole/ClusterRolebinding (with access to entire cluster)
-multiNamespaceMode: false
+multiNamespaceMode: True
 
 # `podTemplate` is a templated string containing the contents of `pod_template_file.yaml` used for
 # KubernetesExecutor workers. The default `podTemplate` will use normal `workers` configuration parameters
@@ -2491,59 +2431,6 @@ dags:
     #
     # credentialsSecret: git-credentials
     #
-        apiVersion: v1
-          kind: Namespace
-          metadata:
-              name: nfv
-              labels:
-                  name: nfv
-          ---
-          apiVersion: v1
-          kind: ServiceAccount
-          metadata:
-              name: nfv-svc
-              namespace: nfv
-          ---
-          apiVersion: rbac.authorization.k8s.io/v1
-          kind: Role
-          metadata:
-              name: nfv-role
-              namespace: nfv
-          rules:
-              - apiGroups:
-                  - ''
-                resources:
-                  - 'pods'
-                verbs:
-                  - 'create'
-                  - 'delete'
-                  - 'get'
-                  - 'list'
-                  - 'patch'
-          ---
-          apiVersion: rbac.authorization.k8s.io/v1
-          kind: RoleBinding
-          metadata:
-              name: nfv-rolebind
-          subjects:
-              - kind: ServiceAccount
-                name: nfv-svc
-                namespace: nfv
-          roleRef:
-              kind: Role
-              name: nfv-role
-              apiGroup: rbac.authorization.k8s.io
-          ---
-          apiVersion: v1
-          kind: Pod
-          metadata:
-              name: sdn-test
-              namespace: nfv
-          spec:
-              serviceAccountName: nfv-svc
-              containers:
-                  - image: alpine:3.9
-                    name: sdn-test-
     #
     # If you are using an ssh clone url, you can load
     # the ssh private key to a k8s secret like the one below

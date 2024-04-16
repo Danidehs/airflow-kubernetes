@@ -21,7 +21,7 @@ dag = DAG(
 )
 
 write_xcom = KubernetesPodOperator(
-    namespace="default",
+    namespace="airflow2",
     image="alpine",
     cmds=["sh", "-c", "mkdir -p /airflow/xcom/;echo '[1,2,3,4]' > /airflow/xcom/return.json"],
     name="test5",
