@@ -2,14 +2,14 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow import DAG
 from datetime import datetime
 
-dag = DAG(
+with DAG(
     'test4',
     default_args={'start_date': datetime(2022, 1, 1)},
     schedule_interval='@once',
     catchup=False
-)
+) as dag:
 
-k = KubernetesPodOperator(
+    KubernetesPodOperator(
     name="test4",
     image="debian",
     cmds=["bash", "-cx"],
@@ -22,4 +22,4 @@ k = KubernetesPodOperator(
 )
 
 
-# k.dry_run()
+#k.dry_run()

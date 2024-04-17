@@ -132,7 +132,9 @@ dags:
     pullSecrets: []
 ## @param extraEnvVars Add extra environment variables for all the Airflow pods
 ##
-extraEnvVars: []
+extraEnvVars:
+  - name: AIRFLOW__CORE__TEST_CONNECTION
+    value: 'Enabled'
 ## @param extraEnvVarsCM ConfigMap with extra environment variables for all the Airflow pods
 ##
 extraEnvVarsCM: ''
@@ -1535,7 +1537,7 @@ ingress:
 serviceAccount:
   ## @param serviceAccount.create Enable creation of ServiceAccount for Airflow pods
   ##
-  create: true
+  create: false
   ## @param serviceAccount.name The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the common.names.fullname template
   ##
