@@ -187,7 +187,7 @@ web:
     registry: docker.io
     repository: bitnami/airflow
     tag: 2.8.1-debian-12-r11
-    # registry: docker.io
+    # registry: ''
     # repository: airflow-custom
     # tag: 1.0.0
     digest: ''
@@ -1554,8 +1554,9 @@ serviceAccount:
 ## @param rbac.create Create Role and RoleBinding
 ##
 rbac:
-  create: false
+  create: true
   enabled: false
+  createSCCRoleBinding: false
   ## @param rbac.rules Custom RBAC rules to set
   ## e.g:
   ## rules:
@@ -1918,3 +1919,4 @@ externalRedis:
   password: ''
   existingSecret: ''
   existingSecretPasswordKey: ''
+# multiNamespaceMode: True

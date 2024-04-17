@@ -12,7 +12,7 @@ with DAG(
     KubernetesPodOperator(
     name="test4",
     namespace="airflow2",
-    image="debian",
+    # image="debian",
     cmds=["bash", "-cx"],
     arguments=["echo 10"],
     labels={"foo": "bar"},

@@ -30,8 +30,8 @@ with DAG(
 ) as dag:
     KubernetesPodOperator(
         # config_file="/home/airflow/composer_kube_config",
-        # namespace="airflow2",
-        image="hello-world",
+        namespace="airflow2",
+        # image="airflow-cluster",
         name="airflow-test-pod",
         task_id="task-one",
         #in_cluster=in_cluster,  # if set to true, will look in the cluster, if false, looks for file
