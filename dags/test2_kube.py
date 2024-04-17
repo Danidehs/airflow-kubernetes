@@ -30,7 +30,7 @@ with DAG(
 ) as dag:
     KubernetesPodOperator(
         # config_file="/home/airflow/composer_kube_config",
-        namespace="airflow2",
+        # namespace="airflow2",
         image="hello-world",
         name="airflow-test-pod",
         task_id="task-one",

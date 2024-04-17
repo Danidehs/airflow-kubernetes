@@ -11,6 +11,7 @@ with DAG(
 
     KubernetesPodOperator(
     name="test4",
+    namespace="airflow2",
     image="debian",
     cmds=["bash", "-cx"],
     arguments=["echo 10"],
@@ -18,7 +19,6 @@ with DAG(
     task_id="test4",
     do_xcom_push=True,
     in_cluster=True
-
 )
 
 
